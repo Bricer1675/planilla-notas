@@ -8,47 +8,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
-  --bg:#F0F2F5;
-  --surface:#FFFFFF;
-  --surface2:#F7F8FA;
-  --border:#E2E5EA;
-  --text:#0D1117;
-  --text2:#5A6370;
-  --text3:#9AA3AF;
-  --blue:#1A6BCC;
-  --blue-light:#EBF3FF;
-  --green:#1E7E45;
-  --green-light:#E8F5EE;
-  --red:#C0392B;
-  --red-light:#FDECEA;
-  --yellow:#B45309;
-  --yellow-light:#FEF3C7;
-  --radius:12px;
-  --radius-sm:8px;
-  --shadow:0 2px 12px rgba(0,0,0,.07);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --bg:#F0F2F5;--surface:#FFFFFF;--surface2:#F7F8FA;--border:#E2E5EA;
+  --text:#0D1117;--text2:#5A6370;--text3:#9AA3AF;
+  --blue:#1A6BCC;--blue-light:#EBF3FF;
+  --green:#1E7E45;--green-light:#E8F5EE;
+  --red:#C0392B;--red-light:#FDECEA;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 2px 12px rgba(0,0,0,.07);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
 .screen{display:none;animation:fadeIn .2s ease;}
 .screen.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-/* Layout */
 .container{max-width:600px;margin:0 auto;padding:16px;}
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
-.topbar-back{background:none;border:none;cursor:pointer;color:var(--text2);font-size:22px;padding:0;line-height:1;display:flex;align-items:center;}
+.topbar-back{background:none;border:none;cursor:pointer;color:var(--text2);font-size:26px;padding:0;line-height:1;display:flex;align-items:center;}
 .topbar-title{font-size:16px;font-weight:600;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .topbar-sub{font-size:12px;color:var(--text3);}
-
-/* Cards */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
-.card-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;}
-
-/* Buttons */
-.btn-row{display:flex;gap:8px;margin-bottom:12px;}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 16px;font-size:14px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif;}
-.btn-block{width:100%;}
+.card-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;font-size:14px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.btn-block{width:100%;display:flex;}
 .btn-primary{background:var(--blue);color:#fff;}
 .btn-primary:hover{background:#155AB5;}
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
@@ -56,81 +37,64 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-green{background:var(--green);color:#fff;}
 .btn-green:hover{background:#166235;}
 .btn-sm{padding:7px 12px;font-size:12px;border-radius:6px;}
-.btn-danger-ghost{background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:2px 4px;line-height:1;display:flex;align-items:center;}
-
-/* Periodo tabs */
+.btn-danger-ghost{background:none;border:none;color:var(--red);font-size:22px;cursor:pointer;padding:2px 4px;line-height:1;display:flex;align-items:center;flex-shrink:0;}
 .periodo-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
 .periodo-tabs::-webkit-scrollbar{display:none;}
 .ptab{flex:0 0 auto;padding:8px 16px;font-size:13px;font-weight:600;border-radius:999px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);transition:all .15s;font-family:'DM Sans',sans-serif;}
 .ptab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-
-/* List items */
 .list-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s;box-shadow:var(--shadow);}
 .list-item:hover{border-color:var(--blue);box-shadow:0 2px 16px rgba(26,107,204,.12);}
 .list-item:active{transform:scale(.99);}
 .list-item-name{font-size:14px;font-weight:600;color:var(--text);}
 .list-item-sub{font-size:12px;color:var(--text3);margin-top:2px;}
-.list-item-right{display:flex;align-items:center;gap:8px;}
-.chevron{color:var(--text3);font-size:16px;}
-
-/* Badges */
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;font-family:'DM Mono',monospace;}
+.list-item-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.chevron{color:var(--text3);font-size:18px;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
 .badge-blue{background:var(--blue-light);color:var(--blue);}
 .badge-green{background:var(--green-light);color:var(--green);}
 .badge-red{background:var(--red-light);color:var(--red);}
 .badge-neutral{background:var(--surface2);color:var(--text3);}
-
-/* Nota definiva grande */
 .def-hero{text-align:center;padding:12px 0 8px;}
 .def-hero-num{font-size:48px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.02em;line-height:1;}
-.def-hero-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
-.def-hero.aprobado .def-hero-num{color:var(--green);}
-.def-hero.aprobado .def-hero-label{color:var(--green);}
-.def-hero.reprobado .def-hero-num{color:var(--red);}
-.def-hero.reprobado .def-hero-label{color:var(--red);}
-.def-hero.neutro .def-hero-num{color:var(--text3);}
-.def-hero.neutro .def-hero-label{color:var(--text3);}
+.def-hero-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
+.def-hero.aprobado .def-hero-num,.def-hero.aprobado .def-hero-label{color:var(--green);}
+.def-hero.reprobado .def-hero-num,.def-hero.reprobado .def-hero-label{color:var(--red);}
+.def-hero.neutro .def-hero-num,.def-hero.neutro .def-hero-label{color:var(--text3);}
 .pesos-label{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;}
-
-/* Componentes */
 .comp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .comp-label{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;}
 .comp-peso{font-size:11px;color:var(--text3);font-weight:400;}
-.prom-pill{background:var(--blue-light);color:var(--blue);padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;font-family:'DM Mono',monospace;}
+.prom-pill{background:var(--blue-light);color:var(--blue);padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
 
-.nota-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:7px;}
-.nota-item-row{display:flex;align-items:center;gap:8px;}
-.nota-input{flex:1;padding:9px 12px;font-size:15px;font-weight:600;font-family:'DM Mono',monospace;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);text-align:center;transition:border-color .15s;}
+/* Nota item con nombre */
+.nota-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+.nota-item-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.nota-input{width:90px;flex-shrink:0;padding:9px 8px;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);text-align:center;transition:border-color .15s;}
 .nota-input:focus{outline:none;border-color:var(--blue);}
-.fecha-tag{font-size:11px;color:var(--text3);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.nombre-input{flex:1;padding:9px 10px;font-size:13px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);transition:border-color .15s;}
+.nombre-input:focus{outline:none;border-color:var(--blue);}
+.nombre-input::placeholder{color:var(--text3);}
+.fecha-tag{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;}
 
 .add-nota-btn{width:100%;padding:10px;font-size:13px;font-weight:600;border:1.5px dashed var(--blue);border-radius:var(--radius-sm);background:var(--blue-light);color:var(--blue);cursor:pointer;margin-top:2px;transition:all .15s;font-family:'DM Sans',sans-serif;}
 .add-nota-btn:hover{background:#D9EAFF;}
-
-/* Stats */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;}
 .stat-val{font-size:20px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text);}
 .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;font-weight:500;}
-
-/* Inicio hero */
-.hero{background:linear-gradient(135deg,#1A6BCC 0%,#0E4B99 100%);border-radius:var(--radius);padding:22px 20px;margin-bottom:16px;color:#fff;}
+.hero{background:linear-gradient(135deg,#1A6BCC 0%,#0E4B99 100%);border-radius:var(--radius);padding:22px 20px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden;}
 .hero-title{font-size:22px;font-weight:700;margin-bottom:4px;}
 .hero-sub{font-size:13px;opacity:.75;}
 .hero-year{font-size:48px;font-weight:700;font-family:'DM Mono',monospace;opacity:.15;position:absolute;right:16px;top:50%;transform:translateY(-50%);line-height:1;}
-.hero-wrap{position:relative;overflow:hidden;}
-
-/* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#0D1117;color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:var(--shadow-lg);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* Est resumen anual */
-.anual-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
-.anual-row:last-child{border-bottom:none;}
-.anual-periods{display:flex;gap:6px;align-items:center;}
 .period-pill{font-size:11px;font-family:'DM Mono',monospace;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--surface2);color:var(--text2);}
 
-/* Responsive desktop */
+/* Modal actividades recientes */
+.actividades-list{max-height:200px;overflow-y:auto;margin-top:6px;}
+.act-chip{display:inline-flex;align-items:center;gap:4px;background:var(--blue-light);color:var(--blue);border:none;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;margin:3px;font-family:'DM Sans',sans-serif;}
+.act-chip:hover{background:#D9EAFF;}
+
 @media(min-width:640px){
   .topbar{padding:16px 24px;}
   .container{padding:20px 24px;}
@@ -139,10 +103,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </style>
 </head>
 <body>
+<div id="toast" class="toast">✓ Guardado</div>
 
-<div id="toast" class="toast">✓ Guardado automáticamente</div>
-
-<!-- ===== INICIO ===== -->
+<!-- INICIO -->
 <div id="s-inicio" class="screen active">
   <div class="topbar">
     <div>
@@ -151,55 +114,41 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
   </div>
   <div class="container">
-    <div class="hero hero-wrap">
+    <div class="hero">
       <div class="hero-year">2026</div>
       <div class="hero-title">Bienvenido,<br>Profe 👋</div>
       <div class="hero-sub">Selecciona un grupo para comenzar</div>
     </div>
-    <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Tus grupos</p>
+    <p style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Tus grupos</p>
     <div class="list-item" onclick="selGrupo('501')">
-      <div>
-        <div class="list-item-name">Grupo 501</div>
-        <div class="list-item-sub">39 estudiantes</div>
-      </div>
+      <div><div class="list-item-name">Grupo 501</div><div class="list-item-sub">39 estudiantes</div></div>
       <div class="list-item-right"><span class="chevron">›</span></div>
     </div>
     <div class="list-item" onclick="selGrupo('502')">
-      <div>
-        <div class="list-item-name">Grupo 502</div>
-        <div class="list-item-sub">38 estudiantes</div>
-      </div>
+      <div><div class="list-item-name">Grupo 502</div><div class="list-item-sub">38 estudiantes</div></div>
       <div class="list-item-right"><span class="chevron">›</span></div>
     </div>
     <div class="card" style="margin-top:16px;">
       <div class="card-title">💡 Cómo usar</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.6;">1. Elige el grupo y la asignatura<br>2. Selecciona el periodo (P1–P4)<br>3. Entra al estudiante y agrega notas<br>4. Todo se <strong>guarda automáticamente</strong><br>5. Exporta a <strong>Excel</strong> cuando quieras</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">1. Elige el grupo y la asignatura<br>2. Selecciona el periodo (P1–P4)<br>3. Entra al estudiante y agrega notas<br>4. Ponle <strong>nombre a cada actividad</strong> (ej: "Examen fracciones")<br>5. Todo se <strong>guarda automáticamente</strong><br>6. Exporta a <strong>Excel</strong> cuando quieras</p>
     </div>
   </div>
 </div>
 
-<!-- ===== ASIGNATURAS ===== -->
+<!-- ASIGNATURAS -->
 <div id="s-asig" class="screen">
   <div class="topbar">
     <button class="topbar-back" onclick="ir('s-inicio')">‹</button>
-    <div>
-      <div class="topbar-title" id="asig-titulo"></div>
-      <div class="topbar-sub">Elige la asignatura</div>
-    </div>
+    <div><div class="topbar-title" id="asig-titulo"></div><div class="topbar-sub">Elige la asignatura</div></div>
   </div>
-  <div class="container">
-    <div id="lista-asig"></div>
-  </div>
+  <div class="container"><div id="lista-asig"></div></div>
 </div>
 
-<!-- ===== ESTUDIANTES ===== -->
+<!-- ESTUDIANTES -->
 <div id="s-ests" class="screen">
   <div class="topbar">
     <button class="topbar-back" onclick="ir('s-asig')">‹</button>
-    <div style="flex:1;">
-      <div class="topbar-title" id="ests-titulo"></div>
-      <div class="topbar-sub" id="ests-sub"></div>
-    </div>
+    <div style="flex:1;"><div class="topbar-title" id="ests-titulo"></div><div class="topbar-sub" id="ests-sub"></div></div>
     <button class="btn btn-green btn-sm" onclick="exportarExcel()">⬇ Excel</button>
   </div>
   <div class="container">
@@ -214,14 +163,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ===== NOTAS ESTUDIANTE ===== -->
+<!-- NOTAS ESTUDIANTE -->
 <div id="s-notas" class="screen">
   <div class="topbar">
     <button class="topbar-back" onclick="volverEsts()">‹</button>
-    <div>
-      <div class="topbar-title" id="notas-titulo"></div>
-      <div class="topbar-sub" id="notas-sub"></div>
-    </div>
+    <div><div class="topbar-title" id="notas-titulo"></div><div class="topbar-sub" id="notas-sub"></div></div>
   </div>
   <div class="container">
     <div class="card">
@@ -247,27 +193,30 @@ const ESTUDIANTES={
   '502':['AMAYA URIANA CAMILO ANDRES','ARPUSHANA ARPUSHANA EVELSY OMARA','BALDOVINO SALAS THAILIN ANDREA','CABALLERO URIANA ADELINA SHARITH','CAMARGO AGUILAR YERINA ANDREA','CANEDO ECHEVERRIA LUIS SAMUEL','CARRILLO ARPUSHANA YEIMIS YOBANA','CORREA JARABA ANGEL DAVID','COTACIO GUTIERREZ SARAK SOFIA','EPIAYU EPIAYU ABEL ENRIQUE','EPIEYU PUSHAINA ALEXANDRA PATRICIA','EPINAYU GAMEZ EILIN DAVIANA','GARCIA GONZALEZ KEMELIS','GONZALEZ PAGAN ALAN STICK','GUANIPA SANCHEZ SANTIAGO ENMANUEL','GUEVARA PALACIOS VISLEIDY NAZARETH','GUTIERREZ PALMAR YERIANGELIS VALENTINA','IBARRA RAMIREZ ANA VALENTINA','IGUARAN ALVAREZ JADEN SOFIA','JAYARIYU GONZALEZ DILAN SAID','LARRADA PALACIO AILIN SALOME','MACHADO PEREZ JANEYS ESTERTH','MARTINEZ REINOSO YAMILIN YARANA','MEDINA MAGDANIEL BELEN ESTRELLA','MERCADO CUELLO SINDERLITH SOFIA','MIRANDA ROMERO ALEJANDRO','PEREZ GOMEZ ANTONELLA','PEREZ JULIO MARIA JOSE','PRADA RIAÑO JOSE DAVID','RADILLO MEDINA JORGE LUIS','RINCONES LOPEZ SARA SOFIA','RIVERO PEREZ DIANNELYS KARINE','ROJAS ACOSTA JHON DAVID','SIERRA PUSHAINA JAROL DAVID','TAPIA COTES ANDREA PAOLA','VEGA FUENTES SARAY JIRETH','VEGA FUENTES YORKAEL','VELASQUEZ CASTRELLON YASIR DAVID']
 };
 const COMPS=[
-  {id:'T',label:'Tareas',plural:'tarea',peso:0.25,icon:'📝'},
-  {id:'C',label:'Cuaderno',plural:'nota de cuaderno',peso:0.25,icon:'📓'},
-  {id:'E',label:'Exámenes',plural:'examen',peso:0.30,icon:'📄'},
-  {id:'B',label:'Comportamiento',plural:'nota de comportamiento',peso:0.20,icon:'😊'}
+  {id:'T',label:'Tareas',singular:'tarea',peso:0.25,icon:'📝',placeholder:'Ej: Tarea fracciones homogéneas'},
+  {id:'C',label:'Cuaderno',singular:'nota de cuaderno',peso:0.25,icon:'📓',placeholder:'Ej: Cuaderno unidad 2'},
+  {id:'E',label:'Exámenes',singular:'examen',peso:0.30,icon:'📄',placeholder:'Ej: Examen números decimales'},
+  {id:'B',label:'Comportamiento',singular:'nota de comportamiento',peso:0.20,icon:'😊',placeholder:'Ej: Semana del 12 al 16 de mayo'}
 ];
 
-const SK='planilla_v4';
+const SK='planilla_v5';
 let G='',A='',EST='',P=1;
 let D={};
 
 function load(){try{const s=localStorage.getItem(SK);if(s)D=JSON.parse(s);}catch(e){D={};}}
-function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}toast();}
-function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}showToast();}
+function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
 function hoy(){const d=new Date();return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;}
 function fmt(n){return n.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ');}
-function dk(g,a,e,p,c,i){return`${g}§${a}§${e}§${p}§${c}§${i}`;}
-function dkF(g,a,e,p,c,i){return`F§${g}§${a}§${e}§${p}§${c}§${i}`;}
+
+// Claves
+function dk(g,a,e,p,c,i){return`V§${g}§${a}§${e}§${p}§${c}§${i}`;}   // valor
+function dkN(g,a,e,p,c,i){return`N§${g}§${a}§${e}§${p}§${c}§${i}`;}  // nombre actividad
+function dkF(g,a,e,p,c,i){return`F§${g}§${a}§${e}§${p}§${c}§${i}`;}  // fecha
 
 function getIdxs(g,a,e,p,c){
-  const pfx=`${g}§${a}§${e}§${p}§${c}§`;
-  return [...new Set(Object.keys(D).filter(k=>k.startsWith(pfx)&&!k.startsWith('F§')).map(k=>parseInt(k.split('§')[5])))].sort((a,b)=>a-b);
+  const pfx=`V§${g}§${a}§${e}§${p}§${c}§`;
+  return [...new Set(Object.keys(D).filter(k=>k.startsWith(pfx)).map(k=>parseInt(k.split('§')[6])))].sort((a,b)=>a-b);
 }
 function promComp(g,a,e,p,c){
   const vals=getIdxs(g,a,e,p,c).map(i=>parseFloat(D[dk(g,a,e,p,c,i)])).filter(v=>!isNaN(v));
@@ -283,13 +232,22 @@ function calcAnual(g,a,e){
   return vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length*100)/100:null;
 }
 
+// Nombres de actividades usadas recientemente para sugerencias
+function getNombresUsados(compId){
+  const pfx=`N§${G}§${A}§`;
+  const nombres=[...new Set(Object.keys(D).filter(k=>k.startsWith(pfx)&&k.split('§')[5]===compId).map(k=>D[k]).filter(v=>v&&v.trim()))];
+  return nombres.slice(-8);
+}
+
 function ir(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function volverEsts(){renderEsts();ir('s-ests');}
 
 load();
 
+/* ---- INICIO ---- */
 function selGrupo(g){G=g;document.getElementById('asig-titulo').textContent=`Grupo ${g}`;renderAsig();ir('s-asig');}
 
+/* ---- ASIGNATURAS ---- */
 function renderAsig(){
   const el=document.getElementById('lista-asig');el.innerHTML='';
   ASIGNATURAS.forEach(asig=>{
@@ -297,15 +255,15 @@ function renderAsig(){
     let vals=[];ests.forEach(e=>{for(let p=1;p<=4;p++){const v=calcDef(G,asig,e,p);if(v!==null)vals.push(v);}});
     const prom=vals.length?(vals.reduce((s,v)=>s+v,0)/vals.length).toFixed(1):'—';
     const aprs=vals.length?vals.filter(v=>v>=3).length:0;
-    const d=document.createElement('div');d.className='list-item';
     const cls=vals.length?(parseFloat(prom)>=3?'badge-green':'badge-red'):'badge-neutral';
+    const d=document.createElement('div');d.className='list-item';
     d.innerHTML=`<div><div class="list-item-name">${EMOJIS[asig]||'📚'} ${asig}</div><div class="list-item-sub">${vals.length?`Prom: ${prom} · ${aprs}/${ests.length} aprobados`:'Sin notas aún'}</div></div><div class="list-item-right"><span class="badge ${cls}">${prom}</span><span class="chevron">›</span></div>`;
     d.onclick=()=>selAsig(asig);el.appendChild(d);
   });
 }
 
+/* ---- ESTUDIANTES ---- */
 function selAsig(asig){A=asig;P=1;document.getElementById('ests-titulo').textContent=asig;document.getElementById('ests-sub').textContent=`Grupo ${G}`;document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('active',i===0));renderEsts();ir('s-ests');}
-
 function selPeriodo(p){P=p;document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('active',[1,2,3,4,0][i]===p));renderEsts();}
 
 function renderEsts(){
@@ -326,6 +284,7 @@ function renderEsts(){
   });
 }
 
+/* ---- NOTAS ---- */
 function selEst(est){EST=est;document.getElementById('notas-titulo').textContent=fmt(est);document.getElementById('notas-sub').textContent=`${A} · Periodo ${P}`;renderComponentes();ir('s-notas');}
 
 function renderComponentes(){
@@ -334,12 +293,33 @@ function renderComponentes(){
     const idxs=getIdxs(G,A,EST,P,comp.id);
     const prom=promComp(G,A,EST,P,comp.id);
     const sec=document.createElement('div');sec.className='card';
+
     let rows=idxs.map(i=>{
       const val=D[dk(G,A,EST,P,comp.id,i)]??'';
+      const nombre=D[dkN(G,A,EST,P,comp.id,i)]||'';
       const fecha=D[dkF(G,A,EST,P,comp.id,i)]||hoy();
-      return`<div class="nota-item" id="ni_${comp.id}_${i}"><div class="nota-item-row"><input class="nota-input" type="number" min="0" max="5" step="0.1" placeholder="0.0" value="${val}" oninput="updNota('${comp.id}',${i},this.value)"/><button class="btn-danger-ghost" onclick="delNota('${comp.id}',${i})">×</button></div><div class="fecha-tag">📅 ${fecha}</div></div>`;
+      return`<div class="nota-item" id="ni_${comp.id}_${i}">
+        <div class="nota-item-top">
+          <input class="nota-input" type="number" min="0" max="5" step="0.1" placeholder="0.0" value="${val}" oninput="updNota('${comp.id}',${i},this.value)" aria-label="Nota"/>
+          <input class="nombre-input" type="text" maxlength="60" placeholder="${comp.placeholder}" value="${nombre}" oninput="updNombre('${comp.id}',${i},this.value)" list="sug_${comp.id}" aria-label="Nombre actividad"/>
+          <button class="btn-danger-ghost" onclick="delNota('${comp.id}',${i})" aria-label="Eliminar">×</button>
+        </div>
+        <div class="fecha-tag">📅 ${fecha}</div>
+      </div>`;
     }).join('');
-    sec.innerHTML=`<div class="comp-header"><span class="comp-label">${comp.icon} ${comp.label} <span class="comp-peso">(${Math.round(comp.peso*100)}%)</span></span><span class="prom-pill" id="prom_${comp.id}">${prom!==null?prom.toFixed(2):'—'}</span></div><div id="items_${comp.id}">${rows}</div><button class="add-nota-btn" onclick="addNota('${comp.id}')">+ Agregar ${comp.plural}</button>`;
+
+    // Sugerencias datalist
+    const usados=getNombresUsados(comp.id);
+    const datalist=usados.length?`<datalist id="sug_${comp.id}">${usados.map(n=>`<option value="${n}">`).join('')}</datalist>`:'';
+
+    sec.innerHTML=`
+      <div class="comp-header">
+        <span class="comp-label">${comp.icon} ${comp.label} <span class="comp-peso">(${Math.round(comp.peso*100)}%)</span></span>
+        <span class="prom-pill" id="prom_${comp.id}">${prom!==null?prom.toFixed(2):'—'}</span>
+      </div>
+      ${datalist}
+      <div id="items_${comp.id}">${rows}</div>
+      <button class="add-nota-btn" onclick="addNota('${comp.id}')">+ Agregar ${comp.singular}</button>`;
     el.appendChild(sec);
   });
   updDefDisplay();updStats();
@@ -348,17 +328,34 @@ function renderComponentes(){
 function nextIdx(cid){const idxs=getIdxs(G,A,EST,P,cid);return idxs.length?Math.max(...idxs)+1:0;}
 
 function addNota(cid){
-  const i=nextIdx(cid);D[dk(G,A,EST,P,cid,i)]='';D[dkF(G,A,EST,P,cid,i)]=hoy();save();
-  const c=document.getElementById(`items_${cid}`);
+  const comp=COMPS.find(c=>c.id===cid);
+  const i=nextIdx(cid);
+  D[dk(G,A,EST,P,cid,i)]='';
+  D[dkN(G,A,EST,P,cid,i)]='';
+  D[dkF(G,A,EST,P,cid,i)]=hoy();
+  save();
+  const container=document.getElementById(`items_${cid}`);
   const div=document.createElement('div');div.className='nota-item';div.id=`ni_${cid}_${i}`;
-  div.innerHTML=`<div class="nota-item-row"><input class="nota-input" type="number" min="0" max="5" step="0.1" placeholder="0.0" oninput="updNota('${cid}',${i},this.value)"/><button class="btn-danger-ghost" onclick="delNota('${cid}',${i})">×</button></div><div class="fecha-tag">📅 ${hoy()}</div>`;
-  c.appendChild(div);div.querySelector('input').focus();
+  div.innerHTML=`<div class="nota-item-top">
+    <input class="nota-input" type="number" min="0" max="5" step="0.1" placeholder="0.0" oninput="updNota('${cid}',${i},this.value)" aria-label="Nota"/>
+    <input class="nombre-input" type="text" maxlength="60" placeholder="${comp.placeholder}" oninput="updNombre('${cid}',${i},this.value)" list="sug_${cid}" aria-label="Nombre actividad"/>
+    <button class="btn-danger-ghost" onclick="delNota('${cid}',${i})" aria-label="Eliminar">×</button>
+  </div>
+  <div class="fecha-tag">📅 ${hoy()}</div>`;
+  container.appendChild(div);
+  div.querySelector('.nota-input').focus();
 }
 
-function delNota(cid,i){delete D[dk(G,A,EST,P,cid,i)];delete D[dkF(G,A,EST,P,cid,i)];save();const el=document.getElementById(`ni_${cid}_${i}`);if(el)el.remove();updProm(cid);updDefDisplay();updStats();}
-
+function delNota(cid,i){
+  delete D[dk(G,A,EST,P,cid,i)];
+  delete D[dkN(G,A,EST,P,cid,i)];
+  delete D[dkF(G,A,EST,P,cid,i)];
+  save();
+  const el=document.getElementById(`ni_${cid}_${i}`);if(el)el.remove();
+  updProm(cid);updDefDisplay();updStats();
+}
 function updNota(cid,i,v){D[dk(G,A,EST,P,cid,i)]=v;save();updProm(cid);updDefDisplay();updStats();}
-
+function updNombre(cid,i,v){D[dkN(G,A,EST,P,cid,i)]=v;save();}
 function updProm(cid){const p=promComp(G,A,EST,P,cid);const el=document.getElementById(`prom_${cid}`);if(el)el.textContent=p!==null?p.toFixed(2):'—';}
 
 function updDefDisplay(){
@@ -373,7 +370,7 @@ function updDefDisplay(){
 
 function updStats(){
   const el=document.getElementById('stats-grupo');const lbl=document.getElementById('stats-periodo-label');if(!el)return;
-  lbl.textContent=`Periodo ${P}`;
+  if(lbl)lbl.textContent=`Periodo ${P}`;
   const vals=[];ESTUDIANTES[G].forEach(e=>{const v=calcDef(G,A,e,P);if(v!==null)vals.push(v);});
   if(!vals.length){el.innerHTML='<p style="font-size:13px;color:var(--text3);grid-column:1/-1;">Sin notas en este periodo aún.</p>';return;}
   const prom=vals.reduce((s,v)=>s+v,0)/vals.length;
@@ -385,6 +382,7 @@ function updStats(){
     <div class="stat-box"><div class="stat-val" style="color:var(--red)">${Math.min(...vals).toFixed(1)}</div><div class="stat-lbl">Nota mín.</div></div>`;
 }
 
+/* ---- EXCEL ---- */
 function exportarExcel(){
   const ests=ESTUDIANTES[G];
   const wb=XLSX.utils.book_new();
@@ -395,22 +393,48 @@ function exportarExcel(){
     rows.push([`Generada el ${hoy()}`]);rows.push([]);
     if(p===0){
       rows.push(['N°','ESTUDIANTE','P1','P2','P3','P4','DEFINITIVA ANUAL']);
-    } else {
-      rows.push(['N°','ESTUDIANTE','TAREAS (Prom)','CUADERNO (Prom)','EXÁMENES (Prom)','COMPORTAMIENTO (Prom)','DEFINITIVA PERIODO']);
-    }
-    ests.forEach((est,n)=>{
-      if(p===0){
+      ests.forEach((est,n)=>{
         const defs=[1,2,3,4].map(pp=>{const v=calcDef(G,A,est,pp);return v!==null?v.toFixed(2):'';});
         const anual=calcAnual(G,A,est);
         rows.push([n+1,fmt(est),...defs,anual!==null?anual.toFixed(2):'']);
-      } else {
-        const cs=COMPS.map(c=>{const v=promComp(G,A,est,p,c.id);return v!==null?v.toFixed(2):'';});
+      });
+    } else {
+      // Encabezado con nombres de actividades
+      const maxItems={};
+      COMPS.forEach(c=>{
+        let max=0;
+        ests.forEach(e=>{const n=getIdxs(G,A,e,p,c.id).length;if(n>max)max=n;});
+        maxItems[c.id]=max;
+      });
+      const header=['N°','ESTUDIANTE'];
+      COMPS.forEach(c=>{
+        for(let i=0;i<maxItems[c.id];i++){
+          // Busca un nombre representativo de esa posición
+          let nombreRep='';
+          for(const est of ests){const n=D[dkN(G,A,est,p,c.id,i)];if(n&&n.trim()){nombreRep=n.trim();break;}}
+          header.push(`${c.label}${maxItems[c.id]>1?` #${i+1}`:''}${nombreRep?`: ${nombreRep}`:''}`);
+        }
+        header.push(`Prom. ${c.label} (${Math.round(c.peso*100)}%)`);
+      });
+      header.push('DEFINITIVA');
+      rows.push(header);
+      ests.forEach((est,n)=>{
+        const row=[n+1,fmt(est)];
+        COMPS.forEach(c=>{
+          for(let i=0;i<maxItems[c.id];i++){
+            const v=D[dk(G,A,est,p,c.id,i)];
+            row.push(v!==''&&v!==undefined&&!isNaN(parseFloat(v))?parseFloat(v):'');
+          }
+          const pr=promComp(G,A,est,p,c.id);
+          row.push(pr!==null?pr.toFixed(2):'');
+        });
         const def=calcDef(G,A,est,p);
-        rows.push([n+1,fmt(est),...cs,def!==null?def.toFixed(2):'']);
-      }
-    });
+        row.push(def!==null?def.toFixed(2):'');
+        rows.push(row);
+      });
+    }
     const ws=XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols']=[{wch:4},{wch:34},{wch:14},{wch:14},{wch:14},{wch:20},{wch:16}];
+    ws['!cols']=[{wch:4},{wch:32},...Array(20).fill({wch:22})];
     XLSX.utils.book_append_sheet(wb,ws,titulo);
   }
   XLSX.writeFile(wb,`Notas_Grupo${G}_${A.replace(/ /g,'_')}_2026.xlsx`);
