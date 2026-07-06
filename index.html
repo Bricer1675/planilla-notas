@@ -332,7 +332,7 @@ function renderAsig(){
     const ests=ESTS[G];
     let vals=[];ests.forEach((_,i)=>{for(let p=1;p<=4;p++){const v=defPeriodo(G,a,p,i);if(v!==null)vals.push(v);}});
     const prom=vals.length?(vals.reduce((s,v)=>s+v,0)/vals.length).toFixed(1):'—';
-    const apr=vals.filter(v=>v>=3).length;
+    const apr=vals.filter(v=>v>=6).length;
     const cls=vals.length?(parseFloat(prom)>=3?'bg':'br'):'bn';
     const d=document.createElement('div');d.className='li';
     d.innerHTML=`<div><div class="li-name">${EMOJIS[a]||'📚'} ${a}</div><div class="li-sub">${vals.length?`Prom: ${prom} · ${apr}/${ests.length} aprobados`:'Sin actividades aún'}</div></div><div class="li-right"><span class="badge ${cls}">${prom}</span><span class="chev">›</span></div>`;
@@ -360,7 +360,7 @@ function renderResumenPeriodo(){
   let vals=[];ests.forEach((_,i)=>{const v=defPeriodo(G,A,P,i);if(v!==null)vals.push(v);});
   if(!vals.length){el.innerHTML='';return;}
   const prom=vals.reduce((s,v)=>s+v,0)/vals.length;
-  const apr=vals.filter(v=>v>=3).length;
+  const apr=vals.filter(v=>v>=6).length;
   el.innerHTML=`<div class="card"><div class="card-title">Resumen Periodo ${P}</div><div class="stats4">
     <div class="sbox"><div class="sval">${prom.toFixed(2)}</div><div class="slbl">Promedio</div></div>
     <div class="sbox"><div class="sval" style="color:var(--green)">${apr}</div><div class="slbl">Aprobados</div></div>
@@ -393,7 +393,7 @@ function renderListaActs(){
           <div class="act-meta">📅 ${act.fecha} · ${calificados}/${ests.length} calificados</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <span class="act-prom ${prom===null?'':'prom!==null&&prom>=3?aprobado:reprobado'}" style="color:${prom===null?'var(--text3)':prom>=3?'var(--green)':'var(--red)'}">${prom!==null?prom.toFixed(2):'—'}</span>
+          <span class="act-prom ${prom===null?'':'prom!==null&&prom>=6?aprobado:reprobado'}" style="color:${prom===null?'var(--text3)':prom>=6?'var(--green)':'var(--red)'}">${prom!==null?prom.toFixed(2):'—'}</span>
           <span style="color:var(--text3);font-size:16px">›</span>
         </div>`;
       div.onclick=()=>{actActual=id;renderCalif();ir('s4');};
@@ -410,8 +410,8 @@ function renderAnual(){
   el.innerHTML='<div class="sep">Nota definitiva anual por estudiante</div>';
   ests.forEach((est,i)=>{
     const def=defAnual(G,A,i);
-    const pills=[1,2,3,4].map(p=>{const v=defPeriodo(G,A,p,i);return`<span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:600;padding:2px 7px;border-radius:6px;background:${v===null?'var(--surface2)':v>=3?'var(--green-lt)':'var(--red-lt)'};color:${v===null?'var(--text3)':v>=3?'var(--green)':'var(--red)'}">P${p}:${v!==null?v.toFixed(1):'—'}</span>`;}).join('');
-    const cls=def===null?'bn':def>=3?'bg':'br';
+    const pills=[1,2,3,4].map(p=>{const v=defPeriodo(G,A,p,i);return`<span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:600;padding:2px 7px;border-radius:6px;background:${v===null?'var(--surface2)':v>=6?'var(--green-lt)':'var(--red-lt)'};color:${v===null?'var(--text3)':v>=6?'var(--green)':'var(--red)'}">P${p}:${v!==null?v.toFixed(1):'—'}</span>`;}).join('');
+    const cls=def===null?'bn':def>=6?'bg':'br';
     const div=document.createElement('div');div.className='li';div.style.cursor='default';
     div.innerHTML=`<div style="flex:1"><div class="li-name">${i+1}. ${fmt(est)}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px">${pills}</div></div><span class="badge ${cls}" style="margin-left:8px">${def!==null?def.toFixed(2):'—'}</span>`;
     el.appendChild(div);
@@ -474,7 +474,7 @@ function renderCalif(){
     row.innerHTML=`<span class="est-num">${i+1}</span>
       <div class="est-name-wrap"><div class="est-name">${fmt(est)}</div></div>
       <div class="est-nota-wrap">
-        <input class="nota-big" type="number" min="0" max="5" step="0.1" placeholder="—" value="${val!==null?val:''}" 
+        <input class="nota-big" type="number" min="1" max="10" step="0.1" placeholder="—" value="${val!==null?val:''}" 
           oninput="updCalif(${i},this.value,this)" 
           onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(${i})}"
           id="nb_${i}" inputmode="decimal"/>
@@ -487,7 +487,7 @@ function renderCalif(){
 
 function updCalif(i,val,inp){
   if(val===''||isNaN(parseFloat(val))){delNota(actActual,i);}
-  else{let v=Math.min(5,Math.max(0,parseFloat(val)));setNota(actActual,i,v);}
+  else{let v=Math.min(10,Math.max(1,parseFloat(val)));setNota(actActual,i,v);}
   const done=getNota(actActual,i)!==null;
   const row=document.getElementById(`er_${i}`);
   if(row)row.className=`est-row${done?' done':''}`;
@@ -523,8 +523,8 @@ function verDetalleAct(){
   const prom=vals.length?vals.reduce((s,v)=>s+v,0)/vals.length:null;
   const el=document.getElementById('s5-prom');const wrap=document.getElementById('s5-def-wrap');
   el.textContent=prom!==null?prom.toFixed(2):'—';
-  wrap.className='def-big '+(prom===null?'neutro':prom>=3?'aprobado':'reprobado');
-  const apr=vals.filter(v=>v>=3).length;
+  wrap.className='def-big '+(prom===null?'neutro':prom>=6?'aprobado':'reprobado');
+  const apr=vals.filter(v=>v>=6).length;
   document.getElementById('s5-stats').innerHTML=vals.length?`
     <div class="sbox"><div class="sval" style="color:var(--green)">${apr}</div><div class="slbl">Aprobados</div></div>
     <div class="sbox"><div class="sval" style="color:var(--red)">${vals.length-apr}</div><div class="slbl">Reprobados</div></div>
@@ -534,7 +534,7 @@ function verDetalleAct(){
   const lista=document.getElementById('s5-lista');lista.innerHTML='';
   ests.forEach((est,i)=>{
     const v=getNota(actActual,i);
-    const cls=v===null?'bn':v>=3?'bg':'br';
+    const cls=v===null?'bn':v>=6?'bg':'br';
     const div=document.createElement('div');div.className='li';div.style.cursor='default';
     div.innerHTML=`<div class="li-name">${i+1}. ${fmt(est)}</div><span class="badge ${cls}">${v!==null?v.toFixed(1):'—'}</span>`;
     lista.appendChild(div);
