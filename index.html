@@ -143,6 +143,44 @@ label.lbl{font-size:12px;font-weight:600;color:var(--text2);display:block;margin
 /* Separador */
 .sep{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;}
 
+/* Inasistencia */
+.est-row.ausente-ce{border-color:#F59E0B;background:#FFFBEB;}
+.est-row.ausente-se{border-color:#EF4444;background:#FEF2F2;}
+.est-row.recuperacion{border-color:#8B5CF6;background:#F5F3FF;}
+.inasist-btn{padding:6px 10px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:filter .15s;}
+.inasist-btn:hover{filter:brightness(.9);}
+.btn-ausente{background:#FEF3C7;color:#92400E;}
+.btn-ausente.on{background:#F59E0B;color:#fff;}
+.btn-sin-excusa{background:#FEE2E2;color:#991B1B;}
+.btn-sin-excusa.on{background:#EF4444;color:#fff;}
+.btn-recup{background:#EDE9FE;color:#5B21B6;}
+.btn-recup.on{background:#8B5CF6;color:#fff;}
+.inasist-wrap{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
+.nota-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+.tag-ce{background:#FEF3C7;color:#92400E;}
+.tag-se{background:#FEE2E2;color:#991B1B;}
+.tag-rec{background:#EDE9FE;color:#5B21B6;}
+
+/* Modal inasistencia */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:620px;box-shadow:var(--sh2);animation:slideUp .2s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--text3);margin-bottom:16px;}
+.modal-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.modal-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--r);padding:16px 12px;cursor:pointer;text-align:center;transition:all .15s;}
+.modal-opt:hover,.modal-opt.sel{border-color:var(--blue);background:var(--blue-lt);}
+.modal-opt .mico{font-size:28px;margin-bottom:5px;}
+.modal-opt .mname{font-size:14px;font-weight:700;}
+.modal-opt .msub{font-size:11px;color:var(--text3);margin-top:2px;}
+.modal-opt.opt-ce.sel{border-color:#F59E0B;background:#FFFBEB;}
+.modal-opt.opt-se.sel{border-color:#EF4444;background:#FEF2F2;}
+.modal-btn-row{display:flex;gap:8px;}
+.modal-cancel{flex:1;background:var(--surface2);color:var(--text2);border:1px solid var(--border);padding:11px;font-size:14px;font-weight:600;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.modal-confirm{flex:2;background:var(--blue);color:#fff;border:none;padding:11px;font-size:14px;font-weight:600;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.modal-quitar{flex:1;background:var(--red-lt);color:var(--red);border:none;padding:11px;font-size:13px;font-weight:600;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;}
+
 @media(min-width:620px){
   .wrap{padding:18px 20px 80px;}
   .stats2{grid-template-columns:repeat(4,1fr);}
@@ -201,6 +239,31 @@ label.lbl{font-size:12px;font-weight:600;color:var(--text2);display:block;margin
     </div>
   </div>
   <button class="fab" id="fab-nueva" onclick="irNuevaAct()">＋ Nueva actividad</button>
+</div>
+
+<!-- ══════════ MODAL INASISTENCIA ══════════ -->
+<div id="modal-inasist" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-est-name"></div>
+    <div class="modal-sub">Registrar novedad de inasistencia</div>
+    <div class="modal-opts">
+      <div class="modal-opt opt-ce" id="mopt-ce" onclick="selModalOpt('CE')">
+        <div class="mico">📋</div>
+        <div class="mname">Con excusa</div>
+        <div class="msub">Tiene soporte · Hace recuperación</div>
+      </div>
+      <div class="modal-opt opt-se" id="mopt-se" onclick="selModalOpt('SE')">
+        <div class="mico">🚫</div>
+        <div class="mname">Sin excusa</div>
+        <div class="msub">Sin justificación · Nota 1.0</div>
+      </div>
+    </div>
+    <div class="modal-btn-row">
+      <button class="modal-quitar" onclick="quitarInasistencia()">Quitar novedad</button>
+      <button class="modal-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="modal-confirm" onclick="confirmarInasistencia()">Guardar</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════ CREAR ACTIVIDAD ══════════ -->
@@ -285,7 +348,7 @@ const SK='planilla_v6';
 let D={actividades:{},notas:{}};// actividades:{id:{g,a,p,tipo,nombre,fecha}} notas:{actId_estIdx: valor}
 let G='',A='',P=1,actActual=null;
 
-function load(){try{const s=localStorage.getItem(SK);if(s)D=JSON.parse(s);if(!D.actividades)D.actividades={};if(!D.notas)D.notas={};}catch(e){D={actividades:{},notas:{}};}}
+function load(){try{const s=localStorage.getItem(SK);if(s)D=JSON.parse(s);if(!D.actividades)D.actividades={};if(!D.notas)D.notas={};if(!D.inasist)D.inasist={};if(!D.recup)D.recup={};}catch(e){D={actividades:{},notas:{},inasist:{},recup:{}};}}
 function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}toast();}
 function toast(){const t=document.getElementById('toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600);}
 function hoy(){const d=new Date();return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;}
@@ -306,10 +369,10 @@ function promAct(actId,g){
   const ests=ESTS[g];const vals=ests.map((_,i)=>getNota(actId,i)).filter(v=>v!==null);
   return vals.length?vals.reduce((s,v)=>s+v,0)/vals.length:null;
 }
-/* Promedio de un tipo para un estudiante en un periodo */
+/* Promedio de un tipo para un estudiante en un periodo — usa nota efectiva */
 function promTipoEst(g,a,p,tipo,estIdx){
   const acts=getActs(g,a,p).filter(([,v])=>v.tipo===tipo);
-  const vals=acts.map(([id])=>getNota(id,estIdx)).filter(v=>v!==null);
+  const vals=acts.map(([id])=>getNotaEfectiva(id,estIdx)).filter(v=>v!==null);
   return vals.length?vals.reduce((s,v)=>s+v,0)/vals.length:null;
 }
 /* Definitiva periodo de un estudiante */
@@ -459,6 +522,26 @@ function crearActividad(){
 }
 
 /* ══════════ S4 Calificar ══════════ */
+
+
+function getInasist(actId,i){return D.inasist[`${actId}_${i}`]||null;}
+function setInasist(actId,i,val){D.inasist[`${actId}_${i}`]=val;save();}
+function delInasist(actId,i){delete D.inasist[`${actId}_${i}`];save();}
+function getRecup(actId,i){const v=D.recup[`${actId}_${i}`];return(v!==undefined&&v!==''&&!isNaN(parseFloat(v)))?parseFloat(v):null;}
+function setRecup(actId,i,val){D.recup[`${actId}_${i}`]=val;save();}
+function delRecup(actId,i){delete D.recup[`${actId}_${i}`];save();}
+
+// Nota efectiva de un estudiante en una actividad (considera inasist y recup)
+function getNotaEfectiva(actId,i){
+  const inasist=getInasist(actId,i);
+  if(inasist==='SE') return 1.0; // sin excusa → 1.0 automático
+  if(inasist==='CE'){
+    const recup=getRecup(actId,i);
+    return recup!==null?recup:null; // con excusa → nota de recuperación si existe
+  }
+  return getNota(actId,i);
+}
+
 function renderCalif(){
   const act=D.actividades[actActual];
   const tipo=TIPOS.find(t=>t.id===act.tipo);
@@ -469,23 +552,80 @@ function renderCalif(){
   const ests=ESTS[act.g];
   const lista=document.getElementById('lista-calif');lista.innerHTML='';
   ests.forEach((est,i)=>{
-    const val=getNota(actActual,i);
-    const row=document.createElement('div');row.className=`est-row${val!==null?' done':''}`;row.id=`er_${i}`;
-    row.innerHTML=`<span class="est-num">${i+1}</span>
-      <div class="est-name-wrap"><div class="est-name">${fmt(est)}</div></div>
-      <div class="est-nota-wrap">
-        <input class="nota-big" type="number" min="1" max="10" step="0.1" placeholder="—" value="${val!==null?val:''}" 
-          oninput="updCalif(${i},this.value,this)" 
-          onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(${i})}"
-          id="nb_${i}" inputmode="decimal"/>
-        <span class="check" id="ck_${i}">${val!==null?'✓':''}</span>
-      </div>`;
-    lista.appendChild(row);
+    renderEstRow(i,est,lista);
   });
   updProg();
 }
 
-function updCalif(i,val,inp){
+function renderEstRow(i,est,container){
+  const act=D.actividades[actActual];
+  const ests=ESTS[act.g];
+  const nombre=est||ests[i];
+  const val=getNota(actActual,i);
+  const inasist=getInasist(actActual,i);
+  const recup=getRecup(actActual,i);
+
+  let rowClass='est-row';
+  if(inasist==='CE') rowClass+=' ausente-ce';
+  else if(inasist==='SE') rowClass+=' ausente-se';
+  else if(val!==null) rowClass+=' done';
+
+  // Determinar si está "resuelto" (tiene nota o inasistencia registrada)
+  const resuelto=val!==null||inasist!==null;
+
+  let notaHtml='';
+  if(inasist==='SE'){
+    // Sin excusa → 1.0 fijo, no editable nota principal
+    notaHtml=`
+      <div class="inasist-wrap">
+        <span class="nota-tag tag-se">🚫 Sin excusa · 1.0</span>
+        <button class="inasist-btn btn-ausente" onclick="abrirModal(${i})" title="Cambiar novedad">✏️</button>
+      </div>`;
+  } else if(inasist==='CE'){
+    // Con excusa → campo de recuperación
+    rowClass='est-row ausente-ce';
+    notaHtml=`
+      <div class="inasist-wrap">
+        <span class="nota-tag tag-ce">📋 C/Excusa</span>
+        <input class="nota-big" type="number" min="1" max="10" step="0.1" placeholder="Recup." 
+          value="${recup!==null?recup:''}" 
+          oninput="updRecup(${i},this.value)"
+          onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(${i})}"
+          id="nb_${i}" inputmode="decimal" title="Nota de recuperación" style="border-color:#F59E0B;width:80px;"/>
+        <button class="inasist-btn btn-ausente" onclick="abrirModal(${i})" title="Cambiar novedad">✏️</button>
+      </div>`;
+  } else {
+    // Normal → nota + botón inasistencia
+    notaHtml=`
+      <div class="est-nota-wrap">
+        <input class="nota-big" type="number" min="1" max="10" step="0.1" placeholder="—" 
+          value="${val!==null?val:''}" 
+          oninput="updCalif(${i},this.value)"
+          onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(${i})}"
+          id="nb_${i}" inputmode="decimal"/>
+        <span class="check" id="ck_${i}">${val!==null?'✓':''}</span>
+        <button class="inasist-btn btn-ausente" onclick="abrirModal(${i})" title="Registrar inasistencia" style="padding:6px 8px;font-size:14px;">🔴</button>
+      </div>`;
+  }
+
+  const existing=document.getElementById(`er_${i}`);
+  if(existing){
+    existing.className=rowClass;
+    existing.querySelector('.est-nota-wrap, .inasist-wrap').outerHTML;
+    existing.innerHTML=`<span class="est-num">${i+1}</span>
+      <div class="est-name-wrap"><div class="est-name">${fmt(nombre)}</div></div>
+      ${notaHtml}`;
+  } else {
+    const row=document.createElement('div');
+    row.className=rowClass;row.id=`er_${i}`;
+    row.innerHTML=`<span class="est-num">${i+1}</span>
+      <div class="est-name-wrap"><div class="est-name">${fmt(nombre)}</div></div>
+      ${notaHtml}`;
+    container.appendChild(row);
+  }
+}
+
+function updCalif(i,val){
   if(val===''||isNaN(parseFloat(val))){delNota(actActual,i);}
   else{let v=Math.min(10,Math.max(1,parseFloat(val)));setNota(actActual,i,v);}
   const done=getNota(actActual,i)!==null;
@@ -494,23 +634,96 @@ function updCalif(i,val,inp){
   const ck=document.getElementById(`ck_${i}`);
   if(ck)ck.textContent=done?'✓':'';
   updProg();
-  // Actualizar resumen en s2 en background
+}
+
+function updRecup(i,val){
+  if(val===''||isNaN(parseFloat(val))){delRecup(actActual,i);}
+  else{let v=Math.min(10,Math.max(1,parseFloat(val)));setRecup(actActual,i,v);}
+  updProg();
 }
 
 function focusNext(i){
-  const ests=ESTS[G||D.actividades[actActual]?.g];
-  if(i+1<ests.length)document.getElementById(`nb_${i+1}`)?.focus();
+  const ests=ESTS[D.actividades[actActual]?.g];
+  if(i+1<ests.length){
+    setTimeout(()=>{const el=document.getElementById(`nb_${i+1}`);if(el)el.focus();},50);
+  }
 }
 
 function updProg(){
   const act=D.actividades[actActual];const ests=ESTS[act.g];
-  const done=ests.filter((_,i)=>getNota(actActual,i)!==null).length;
-  const pct=Math.round(done/ests.length*100);
+  let resueltos=0,inasistSE=0,inasistCE=0,pendRecup=0;
+  ests.forEach((_,i)=>{
+    const v=getNota(actActual,i);
+    const ins=getInasist(actActual,i);
+    const rec=getRecup(actActual,i);
+    if(ins==='SE'){resueltos++;inasistSE++;}
+    else if(ins==='CE'){inasistCE++;if(rec!==null)resueltos++;else pendRecup++;}
+    else if(v!==null)resueltos++;
+  });
+  const total=ests.length;
+  const pct=Math.round(resueltos/total*100);
   document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('prog-txt').textContent=`${done} de ${ests.length} calificados · ${pct}%`;
+  let txt=`${resueltos} de ${total} · ${pct}%`;
+  if(inasistSE>0) txt+=` · 🚫 ${inasistSE} sin excusa`;
+  if(inasistCE>0) txt+=` · 📋 ${inasistCE} c/excusa${pendRecup>0?` (${pendRecup} sin recuperar)`:''}`;
+  document.getElementById('prog-txt').textContent=txt;
 }
 
 function irDesdeCalif(){renderS2();ir('s2');}
+
+/* ── Modal inasistencia ── */
+let modalEstIdx=-1,modalOptSel='';
+
+function abrirModal(i){
+  modalEstIdx=i;modalOptSel='';
+  const act=D.actividades[actActual];
+  const est=ESTS[act.g][i];
+  document.getElementById('modal-est-name').textContent=fmt(est);
+  // Pre-seleccionar si ya tiene inasistencia
+  const actual=getInasist(actActual,i);
+  if(actual){selModalOpt(actual);}
+  else{document.getElementById('mopt-ce').classList.remove('sel');document.getElementById('mopt-se').classList.remove('sel');}
+  document.getElementById('modal-inasist').classList.remove('hidden');
+}
+
+function selModalOpt(opt){
+  modalOptSel=opt;
+  document.getElementById('mopt-ce').classList.toggle('sel',opt==='CE');
+  document.getElementById('mopt-se').classList.toggle('sel',opt==='SE');
+}
+
+function cerrarModal(){document.getElementById('modal-inasist').classList.add('hidden');modalEstIdx=-1;modalOptSel='';}
+
+function confirmarInasistencia(){
+  if(!modalOptSel){alert('Selecciona el tipo de inasistencia');return;}
+  const i=modalEstIdx;
+  // Guardar inasistencia
+  setInasist(actActual,i,modalOptSel);
+  // Si sin excusa → limpiar nota normal y recuperación
+  if(modalOptSel==='SE'){delNota(actActual,i);delRecup(actActual,i);}
+  // Si con excusa → limpiar nota normal (se espera recuperación)
+  if(modalOptSel==='CE'){delNota(actActual,i);}
+  cerrarModal();
+  // Re-renderizar esa fila
+  const act=D.actividades[actActual];
+  const est=ESTS[act.g][i];
+  renderEstRow(i,est,null);
+  updProg();
+}
+
+function quitarInasistencia(){
+  const i=modalEstIdx;
+  delInasist(actActual,i);
+  delRecup(actActual,i);
+  cerrarModal();
+  const act=D.actividades[actActual];
+  const est=ESTS[act.g][i];
+  renderEstRow(i,est,null);
+  updProg();
+}
+
+// Cerrar modal tocando fuera
+document.getElementById('modal-inasist').addEventListener('click',function(e){if(e.target===this)cerrarModal();});
 
 /* ══════════ S5 Detalle actividad ══════════ */
 function verDetalleAct(){
@@ -534,9 +747,19 @@ function verDetalleAct(){
   const lista=document.getElementById('s5-lista');lista.innerHTML='';
   ests.forEach((est,i)=>{
     const v=getNota(actActual,i);
-    const cls=v===null?'bn':v>=6?'bg':'br';
+    const ins=getInasist(actActual,i);
+    const rec=getRecup(actActual,i);
+    let badge='',extra='';
+    if(ins==='SE'){badge=`<span class="nota-tag tag-se">🚫 Sin excusa · 1.0</span>`;}
+    else if(ins==='CE'){
+      badge=`<span class="nota-tag tag-ce">📋 C/Excusa</span>`;
+      extra=rec!==null?`<span class="nota-tag tag-rec" style="margin-left:4px">Recup: ${rec.toFixed(1)}</span>`:`<span class="nota-tag" style="background:#FEF3C7;color:#92400E;margin-left:4px">Pendiente</span>`;
+    } else {
+      const cls=v===null?'bn':v>=6?'bg':'br';
+      badge=`<span class="badge ${cls}">${v!==null?v.toFixed(1):'—'}</span>`;
+    }
     const div=document.createElement('div');div.className='li';div.style.cursor='default';
-    div.innerHTML=`<div class="li-name">${i+1}. ${fmt(est)}</div><span class="badge ${cls}">${v!==null?v.toFixed(1):'—'}</span>`;
+    div.innerHTML=`<div class="li-name">${i+1}. ${fmt(est)}</div><div style="display:flex;align-items:center;gap:4px">${badge}${extra}</div>`;
     lista.appendChild(div);
   });
   ir('s5');
@@ -579,12 +802,33 @@ function exportarExcel(){
         const row=[i+1,fmt(est)];
         TIPOS.forEach(t=>{
           const porTipo=acts.filter(([,v])=>v.tipo===t.id);
-          porTipo.forEach(([id])=>{const v=getNota(id,i);row.push(v!==null?v:'');});
+          porTipo.forEach(([id])=>{
+            const ins=getInasist(id,i);
+            const rec=getRecup(id,i);
+            const v=getNota(id,i);
+            if(ins==='SE') row.push('INASIST. S/EXCUSA (1.0)');
+            else if(ins==='CE') row.push(rec!==null?`RECUP: ${rec}`:'INASIST. C/EXCUSA (PENDIENTE)');
+            else row.push(v!==null?v:'');
+          });
           if(porTipo.length){const pr=promTipoEst(G,A,p,t.id,i);row.push(pr!==null?pr.toFixed(2):'');}
         });
-        const def=defPeriodo(G,A,p,i);row.push(def!==null?def.toFixed(2):'');
+        // Columna de novedades resumen
+        const novedades=[];
+        acts.forEach(([id,act])=>{
+          const ins=getInasist(id,i);
+          if(ins==='SE') novedades.push(`${act.nombre}: Inasist. sin excusa`);
+          if(ins==='CE'){
+            const rec=getRecup(id,i);
+            novedades.push(`${act.nombre}: Inasist. con excusa${rec!==null?` (Recup: ${rec})`:', pendiente recuperación'}`);
+          }
+        });
+        const def=defPeriodo(G,A,p,i);
+        row.push(def!==null?def.toFixed(2):'');
+        row.push(novedades.join(' | ')||'');
         rows.push(row);
       });
+      // Agregar columna de novedades al header
+      header.push('NOVEDADES INASISTENCIAS');
     }
     const ws=XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:4},{wch:32},...Array(30).fill({wch:20})];
